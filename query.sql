@@ -30,3 +30,20 @@ then 'asertiv'
 else null
 end as Stil_c1
 from MASTER_DB.CHESTIONAR.COMMUNICATION c;
+------------
+select c.*
+from
+(select user_id, max(stil_determinat) as max_stil
+from 
+(select user_id, stil_c1, count(*) as stil_determinat
+from master_db.chestionar.communication
+where stil_c1 is not null --and user_id= 'U1'
+group by stil_c1, user_id)
+group by user_id) maxim
+left join 
+(select user_id, stil_c1, count(*) as stil_determinat
+from master_db.chestionar.communication
+where stil_c1 is not null --and user_id= 'U1'
+group by stil_c1, user_id) c
+on maxim.user_id=c.user_id and maxim.max_stil=c.stil_determinat
+order by max_stil;
